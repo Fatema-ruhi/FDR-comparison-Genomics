@@ -65,7 +65,7 @@ To improve biomarker discovery reliability by integrating hypothesis testing wit
 ├── notebooks/       # R Markdown
 ├── scripts/         # Modular R
 ├── results/         # Outputs: tables, figures, ROC curves
-├── data/            # Preprocessed (or mock) GDC files
+├── data/            # Preprocessed GDC files
 └── README.md
 ````
 
