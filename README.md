@@ -37,7 +37,6 @@ Citation: Fatema Yesmen Ruhi (2022). "A Comparison of Multiple Testing Procedure
 ## 📁 2. `fdr-tcga-breast-cancer/README.md`  
 **(Current Work – Pipeline Development)**
 
-```markdown
 # FDR-Controlled Machine Learning Pipelines for Breast Cancer Genomics
 
 This repository includes ongoing work for building FDR-controlled statistical pipelines to identify cancer-specific gene signatures from high-dimensional genomic datasets, using publicly available data from the National Cancer Insitute GDC data.
@@ -61,7 +60,6 @@ To improve biomarker discovery reliability by integrating hypothesis testing wit
 
 ## 📁 Structure
 
-```bash
 ├── notebooks/       # R Markdown
 ├── scripts/         # Modular R
 ├── results/         # Outputs: tables, figures, ROC curves
