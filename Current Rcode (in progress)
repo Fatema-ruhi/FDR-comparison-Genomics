@@ -1,0 +1,95 @@
+#Install & Load Required Packages
+# Install if needed
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(c("TCGAbiolinks", "SummarizedExperiment", "edgeR", "limma"))
+
+# Load packages
+library(TCGAbiolinks)
+library(SummarizedExperiment)
+library(edgeR)
+library(limma)
+#Query TCGA-BRCA HTSeq Counts
+query <- GDCquery(
+  project = "TCGA-BRCA",
+  data.category = "Transcriptome Profiling",
+  data.type = "Gene Expression Quantification",
+  workflow.type = "HTSeq - Counts"
+)
+#Download the Data
+GDCdownload(query)
+
+#Prepare and Load the Data
+data <- GDCprepare(query)
+
+#Extract Expression Matrix & Sample Info
+expr <- assay(data)                     # Raw counts
+meta <- colData(data)                   # Sample metadata
+
+#Filter for Primary Tumor and Normal Samples
+# Sample types: TP = Primary Tumor, NT = Solid Tissue Normal
+sample_types <- meta$short_letter_code
+tumor_idx <- which(sample_types == "TP")
+normal_idx <- which(sample_types == "NT")
+expr_tumor <- expr[, tumor_idx]
+expr_normal <- expr[, normal_idx]
+# Combine into one expression set
+expr_combined <- cbind(expr_tumor, expr_normal)
+# Create group labels
+group <- factor(c(rep("Tumor", length(tumor_idx)), rep("Normal", length(normal_idx))))
+
+#Differential Expression Analysis Using edgeR
+# Create DGEList
+dge <- DGEList(counts = expr_combined, group = group)
+# Filter lowly expressed genes
+keep <- filterByExpr(dge)
+dge <- dge[keep,, keep.lib.sizes=FALSE]
+# Normalize
+dge <- calcNormFactors(dge)
+# Design matrix
+design <- model.matrix(~group)
+# Estimate dispersion
+dge <- estimateDisp(dge, design)
+# Fit model
+fit <- glmQLFit(dge, design)
+qlf <- glmQLFTest(fit)
+# Extract top genes
+top_genes <- topTags(qlf, n = Inf)
+# View first few results
+head(top_genes$table)
+
+# p-values from edgeR's topTags output
+pvals <- top_genes$table$PValue
+
+#Benjamini-Hochberg (BH) FDR
+fdr_bh <- p.adjust(pvals, method = "BH")
+
+#Bonferroni with Empirical Variance (Bon-EV)
+fdr_bonferroni <- p.adjust(pvals, method = "bonferroni")
+
+#Storey’s q-value Method
+Install and apply the qvalue package:
+if (!require("qvalue")) {
+  BiocManager::install("qvalue")
+}
+library(qvalue)
+qval_obj <- qvalue(p = pvals)
+storey_q <- qval_obj$qvalues
+
+#Combine All Results
+results <- top_genes$table
+results$FDR_BH <- fdr_bh
+results$FDR_BonEV <- fdr_bonferroni
+results$Q_Storey <- storey_q
+
+ #View Significant Genes from Each Method
+sig_bh <- results[results$FDR_BH < 0.05, ]
+sig_bonev <- results[results$FDR_BonEV < 0.05, ]
+sig_storey <- results[results$Q_Storey < 0.05, ]
+cat("Number of significant genes:\n")
+cat("Benjamini-Hochberg:", nrow(sig_bh), "\n")
+cat("Bonferroni-EV:", nrow(sig_bonev), "\n")
+cat("Storey's q-value:", nrow(sig_storey), "\n")
+
+#Save Combined Results (Optional)
+write.csv(results, "tcga_brca_fdr_comparison.csv", row.names = TRUE)
