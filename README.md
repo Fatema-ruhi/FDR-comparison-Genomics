@@ -24,7 +24,7 @@ Simulations focused on identifying significant genes from breast cancer datasets
 
 ```bash
 ├── data/            # Simulated datasets and sample input structure
-├── scripts/         # R code for simulations and statistical testing
+├── scripts/         # R code for simulations and statistical testing ( https://github.com/Fatema-ruhi/FDR-comparison-Genomics/blob/37f93fa66f747cde537d65ebbb0b9eedb16cafda/Thesis_Code.R )
 ├── figures/         # Visualization outputs from experiments
 ├── thesis/          # PDF of thesis and supporting materials
 └── README.md
