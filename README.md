@@ -43,7 +43,7 @@ This repository includes ongoing work for building FDR-controlled statistical pi
 
 ## 🎯 Research Objective
 
-To improve biomarker discovery reliability by integrating hypothesis testing with FDR control methods and machine learning classifiers across groups.
+To improve biomarker discovery reliability by integrating hypothesis testing with FDR control methods and machine learning classifiers across groups of data.
 
 ## 🔬 Methods
 
