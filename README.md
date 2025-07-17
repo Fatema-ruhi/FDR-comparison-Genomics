@@ -1,5 +1,5 @@
 # FDR-comparison-Genomics
-# False Discovery Rate (FDR) Control Under Unequal Variances in Genomic Data
+# Enhancing Cancer Diagnostics through Integrated Statistical and Machine Learning Approaches
 
 This repository contains the code, results, and documentation from my master's thesis:
 **"A Comparison of Multiple Testing Procedures for Controlling the False Discovery Rate Under Unequal Variances."**
